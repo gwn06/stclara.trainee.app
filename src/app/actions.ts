@@ -5,6 +5,7 @@ import { createClient } from "@/utils/supabase/server";
 import { createServerAdminClient } from "@/utils/supabase/serverAdmin";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { UserData } from "@/components/secret-message";
 
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
@@ -182,7 +183,7 @@ export async function getUsers() {
     .order("id", { ascending: false });
 
   if (error) throw error;
-  return data;
+  return data as UserData[];
 }
 
 export async function updateSecretMessageAction(
