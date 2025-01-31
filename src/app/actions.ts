@@ -6,6 +6,8 @@ import { createServerAdminClient } from "@/utils/supabase/serverAdmin";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { UserData } from "@/components/secret-message";
+import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
+import { revalidateTag } from "next/cache";
 
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
@@ -28,6 +30,8 @@ export const signUpAction = async (formData: FormData) => {
       emailRedirectTo: `${origin}/auth/callback`,
     },
   });
+
+  revalidateTag("users");
 
   if (error) {
     console.error(error.code + " " + error.message);
@@ -155,8 +159,11 @@ export async function deleteUserAccountAction(userId: string) {
   return redirect("/sign-in");
 }
 
-export async function getUserBy(userId: string) {
-  const supabase = await createClient();
+export async function getUserBy(
+  userId: string,
+  cookies?: ReadonlyRequestCookies
+) {
+  const supabase = await createClient(cookies);
   const { data } = await supabase
     .from("users")
     .select("*")
@@ -175,8 +182,8 @@ export async function getUser(id: number) {
   return data;
 }
 
-export async function getUsers() {
-  const supabase = await createClient();
+export async function getUsers(cookies?: ReadonlyRequestCookies) {
+  const supabase = await createClient(cookies);
   const { data, error } = await supabase
     .from("users")
     .select("id, user_id, email ")
@@ -197,6 +204,8 @@ export async function updateSecretMessageAction(
     .eq("id", id)
     .select()
     .single();
+
+  revalidateTag("user");
   return data;
 }
 
@@ -217,6 +226,8 @@ export async function addFriend(userId: string, friendId: string) {
     .insert([{ requester_id: userId, recipient_id: friendId }])
     .select("*")
     .single();
+
+  revalidateTag("users");
   if (error) throw error;
   return data;
 }
@@ -239,11 +250,16 @@ export async function acceptFriendRequest(requestId: number) {
     .eq("id", requestId)
     .select("*")
     .single();
+  
+      revalidateTag("users");
   if (error) throw error;
   return data;
 }
 
-export async function viewFriendSecretMessage(userId: string, friendId: string) {
+export async function viewFriendSecretMessage(
+  userId: string,
+  friendId: string
+) {
   const supabase = await createClient();
 
   const { data: directFriendship, error: directError } = await supabase
@@ -262,11 +278,10 @@ export async function viewFriendSecretMessage(userId: string, friendId: string) 
 
   if (directError && reverseError) {
     console.error("Error fetching friendships:", directError || reverseError);
-    return null; 
+    return null;
   }
 
   const friendshipData = directFriendship || reverseFriendship;
-  
-  return friendshipData; 
-}
 
+  return friendshipData;
+}

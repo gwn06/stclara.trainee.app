@@ -1,8 +1,12 @@
 import { createServerClient } from "@supabase/ssr";
+import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 import { cookies } from "next/headers";
 
-export async function createClient() {
-  const cookieStore = await cookies();
+export async function createClient(cookiesOverride?: ReadonlyRequestCookies) {
+  let cookieStore = cookiesOverride;
+  if (!cookieStore) {
+    cookieStore = await cookies();
+  }
 
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

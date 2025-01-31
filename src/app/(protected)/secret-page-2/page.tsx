@@ -3,9 +3,11 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import Loading from "../loading";
-import { getUserBy } from "@/app/actions";
+import { getCachedUser } from "@/utils/supabase/cachedActions";
+import { cookies } from "next/headers";
 
 export default async function SecretPage2() {
+  const cookieStore = await cookies();
   const supabase = await createClient();
 
   const { data, error } = await supabase.auth.getUser();
@@ -13,7 +15,8 @@ export default async function SecretPage2() {
     redirect("/sign-in");
   }
 
-  const user = await getUserBy(data.user.id);
+
+  const user = await getCachedUser(data.user.id, cookieStore);
   return (
     <div className="h-screen flex items-center justify-center">
       <Suspense fallback={<Loading />}>

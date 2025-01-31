@@ -1,9 +1,11 @@
-import { getUserBy, getUsers } from "@/app/actions";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import SecretMessageAndUserList from "./comonents/secret-message-and-user-list";
+import { getCachedUser, getCachedUsers } from "@/utils/supabase/cachedActions";
+import { cookies } from "next/headers";
 
 export default async function SecretPage3() {
+  const cookieStore = await cookies();
   const supabase = await createClient();
 
   const { data, error } = await supabase.auth.getUser();
@@ -11,8 +13,10 @@ export default async function SecretPage3() {
     redirect("/sign-in");
   }
 
-  const currentUser = await getUserBy(data.user.id);
-  const users = getUsers();
+  const currentUser = await getCachedUser(data.user.id, cookieStore);
+  // const currentUser = await getUserBy(data.user.id);
+  const users = getCachedUsers(cookieStore);
+
   return (
     <div className="">
       <SecretMessageAndUserList currentUser={currentUser} users={users} /> 
