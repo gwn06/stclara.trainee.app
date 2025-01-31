@@ -139,7 +139,7 @@ export default function UserList({
   };
 
   return (
-    <div className="h-2/3 text-center overflow-auto rounded-lg border shadow-md p-6">
+    <div className="text-center overflow-auto rounded-lg border shadow-md p-2">
       {isDialogOpen && (
         <div className="fixed inset-0 rounded-lg flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded shadow-md">
@@ -180,7 +180,7 @@ export default function UserList({
               d="M12 14c-4.418 0-8 1.79-8 4v1h16v-1c0-2.21-3.582-4-8-4z"
             />
           </svg>
-          <span className="mx-2">{currentUserData.email}</span>
+          <span className="mx-2 ">{currentUserData.email}</span>
 
           <button
             onClick={() => {

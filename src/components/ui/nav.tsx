@@ -14,11 +14,11 @@ export default async function NavBar() {
 
   const { data, error } = await supabase.auth.getUser();
   return (
-    <nav className="bg-green-700 text-white shadow-sm px-8 py-3">
+    <nav className="bg-green-700 text-white shadow-sm px-8 py-3 text-sm">
       <div className="flex justify-between items-center">
         <Link href="/"> Home </Link>
 
-        <ul className="flex flex-row space-x-4">
+        <ul className="flex flex-col md:flex-row space-x-4 text-sm">
           {routes.map((link) => (
             <li key={link.id} className="hover:text-gray-200">
               <Link href={link.route}>{link.routeName}</Link>

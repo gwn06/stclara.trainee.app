@@ -14,7 +14,7 @@ export default async function SecretPage3() {
   const currentUser = await getUserBy(data.user.id);
   const users = getUsers();
   return (
-    <div className="h-screen flex items-center justify-center">
+    <div className="">
       <SecretMessageAndUserList currentUser={currentUser} users={users} /> 
     </div>
   );
