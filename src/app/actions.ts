@@ -55,6 +55,8 @@ export const signInAction = async (formData: FormData) => {
     password,
   });
 
+  revalidateTag("user");
+  revalidateTag("users");
   if (error) {
     return encodedRedirect("error", "/sign-in", error.message);
   }
@@ -136,6 +138,9 @@ export const resetPasswordAction = async (formData: FormData) => {
 export const signOutAction = async () => {
   const supabase = await createClient();
   await supabase.auth.signOut();
+
+  revalidateTag("user");
+  revalidateTag("users");
   return redirect("/sign-in");
 };
 
@@ -147,6 +152,10 @@ export async function deleteUserAccountAction(userId: string) {
     data: { user },
     error: authError,
   } = await supabase.auth.getUser();
+
+  revalidateTag("user");
+  revalidateTag("users");
+
   if (authError) throw authError;
 
   if (user?.id !== userId) {

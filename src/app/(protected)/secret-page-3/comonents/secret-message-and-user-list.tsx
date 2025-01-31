@@ -14,9 +14,7 @@ export default function SecretMessageAndUserList({
   users,
 }: SecretMessageAndUserListProps) {
   const [readonly, setReadonly] = useState(false);
-  const [secretMessage, setSecretMessage] = useState(
-    currentUser.secret_message
-  );
+  const [secretMessage, setSecretMessage] = useState( currentUser.secret_message);
   return (
     <div className="">
       <div className="flex flex-col md:flex-row  justify-center space-x-4 mt-8">
@@ -36,8 +34,8 @@ export default function SecretMessageAndUserList({
             <UserList
               currentUserData={currentUser}
               users={users}
-              setSecretMesage={setSecretMessage}
-              setReadonly={setReadonly}
+              setSecretMesage={(newMessage) => setSecretMessage(newMessage)}
+              setReadonly={(newReadonly) => setReadonly(newReadonly)}
             />
           </Suspense>
         </div>

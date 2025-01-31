@@ -45,7 +45,7 @@ export default function UserList({
     async function fetchCurrentUserFriendRequests() {
       const data = await getFriendRequests(currentUserData.user_id);
       if (data) {
-        const users = listOfUsers.map((userData) => ({
+        const usersWithFriendRequests = listOfUsers.map((userData) => ({
           ...userData,
           friend_request:
             data.find(
@@ -54,12 +54,12 @@ export default function UserList({
                 request.requester_id === userData.user_id
             ) ?? null,
         }));
-        setListOfUsersWithCurrentUserFriendRequests(users);
+        setListOfUsersWithCurrentUserFriendRequests(usersWithFriendRequests);
       }
     }
 
     fetchCurrentUserFriendRequests();
-  }, [currentUserData, listOfUsers]);
+  }, []);
 
   const handleUserView = async (user: UserData) => {
     setReadonly(true);
