@@ -16,17 +16,17 @@ export async function updateSession(request: NextRequest) {
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value, options }) =>
-            request.cookies.set(name, value),
+            request.cookies.set(name, value)
           );
           supabaseResponse = NextResponse.next({
             request,
           });
           cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options),
+            supabaseResponse.cookies.set(name, value, options)
           );
         },
       },
-    },
+    }
   );
 
   // Do not run code between createServerClient and
@@ -39,8 +39,14 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-if (user) {
-    supabaseResponse.cookies.set('userId', user.id, { httpOnly: true, path: '/' });
+  if (user) {
+    supabaseResponse.cookies.set("userId", user.id, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax", // Adjust based on your CSRF protection needs
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    });
   }
 
   if (
@@ -48,6 +54,7 @@ if (user) {
     !request.nextUrl.pathname.startsWith("/sign-in") &&
     !request.nextUrl.pathname.startsWith("/sign-up")
   ) {
+    supabaseResponse.cookies.delete("userId");
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone();
     url.pathname = "/sign-in";
